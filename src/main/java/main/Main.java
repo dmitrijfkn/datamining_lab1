@@ -29,10 +29,11 @@ public class Main {
         for (CSV c : list) {
             strings = c.getText();
             for (String line : strings) {
-                wordCounter.addWord(new WordWithType(c.getType(),line));
+                wordCounter.addWord(new WordWithType(c.getType(), line));
             }
         }
 
-wordCounter.printAChart("ham");
+        wordCounter.printAChart("ham");
+        wordCounter.printBChart("ham",csvConverter.getListMessageLength());
     }
 }

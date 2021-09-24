@@ -103,13 +103,29 @@ public class WordCounter {
         List<Integer> listX = new ArrayList<>();
         List<Integer> listY = new ArrayList<>();
 
-        for (int i = 0; i < listMessageLength.size(); i++) {
-            if (listMessageLength.get(i).getType().equals(type)) {
-                if (listX.indexOf(listMessageLength.get(i).getLength()) != null)
+
+        int max = 0;
+
+
+        for (MessageLenghts ml : listMessageLength) {
+            if (ml.getLength() > max) {
+                max = ml.getLength();
             }
         }
 
-        final A a = new A("Middle word length for " + type + " = " + wordLengthMiddle(type), listX, listY, "Word length", "Count");
+        for (int i = 0; i <= max+1; i++) {
+            listX.add(i);
+            listY.add(0);
+        }
+
+
+        for (int i = 0; i < listMessageLength.size(); i++) {
+            if (listMessageLength.get(i).getType().equals(type)) {
+                listY.set(listMessageLength.get(i).getLength(), listY.get(listMessageLength.get(i).getLength()) + 1);
+            }
+        }
+
+        final A a = new A("Middle length of massage for " + type + " = " + middle, listY, listX, "length of massage", "Count");
         a.pack();
         RefineryUtilities.centerFrameOnScreen(a);
         a.setVisible(true);
