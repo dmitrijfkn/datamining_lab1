@@ -2,7 +2,7 @@ package entities;
 
 import java.util.Objects;
 
-public class WordWithType {
+public class WordWithType implements Comparable<WordWithType> {
     String type;
     String word;
 
@@ -31,5 +31,11 @@ public class WordWithType {
     @Override
     public int hashCode() {
         return Objects.hash(type, word);
+    }
+
+
+    @Override
+    public int compareTo(WordWithType o) {
+        return word.compareTo(o.getWord());
     }
 }

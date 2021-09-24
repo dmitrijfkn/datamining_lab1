@@ -22,34 +22,46 @@ import org.jfree.ui.TextAnchor;
 
 public class A extends ApplicationFrame {
 
-    public A(final String title, List<Integer> listX, List<Integer> listY) {
-        super(title);
+    public A(final String title, List<Integer> listX, List<Integer> listY, String XName, String YName) {
+        super("Kostenko Lab1");
         IntervalXYDataset dataset = createDataset(listX, listY);
-        JFreeChart chart = createChart(dataset);
+        JFreeChart chart = createChart(title, dataset,XName,YName);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         setContentPane(chartPanel);
     }
 
     private IntervalXYDataset createDataset(List<Integer> listX, List<Integer> listY) {
-        final XYSeries series = new XYSeries("Random Data");
+        final XYSeries series = new XYSeries("");
 
-
-        for(WordWithType wordWithType: list){
-            if (wordWithType.getType().equals(type)){
-
-            }
+        for(int i = 0; i< listX.size();i++){
+            series.add(listX.get(i),listY.get(i));
         }
-        series.add(1.0, 400.2);
-        series.add(5.0, 294.1);
-        series.add(4.0, 100.0);
-        series.add(12.5, 734.4);
-        series.add(17.3, 453.2);
-        series.add(21.2, 500.2);
-        series.add(21.9, null);
-        series.add(25.6, 734.4);
-        series.add(30.0, 453.2);
+
         final XYSeriesCollection dataset = new XYSeriesCollection(series);
         return dataset;
+    }
+
+    private JFreeChart createChart(String title, IntervalXYDataset dataset, String XName, String YName) {
+        final JFreeChart chart = ChartFactory.createXYBarChart(
+                title,
+                XName,
+                false,
+                YName,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+        XYPlot plot = (XYPlot) chart.getPlot();
+        final IntervalMarker target = new IntervalMarker(400.0, 700.0);
+        target.setLabel("Target Range");
+        target.setLabelFont(new Font("SansSerif", Font.ITALIC, 11));
+        target.setLabelAnchor(RectangleAnchor.LEFT);
+        target.setLabelTextAnchor(TextAnchor.CENTER_LEFT);
+        target.setPaint(new Color(222, 222, 255, 128));
+        plot.addRangeMarker(target, Layer.BACKGROUND);
+        return chart;
     }
 }

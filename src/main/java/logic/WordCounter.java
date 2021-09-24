@@ -1,7 +1,7 @@
 package logic;
 
+import entities.MessageLenghts;
 import entities.WordWithType;
-import graphics.ChartSample;
 import org.jfree.ui.RefineryUtilities;
 
 import java.io.FileNotFoundException;
@@ -52,17 +52,69 @@ public class WordCounter {
                 counter += valueList.get(i);
             }
         }
-        if (counter>0){
-            return sum/counter;
+        if (counter > 0) {
+            return (double) sum / counter;
         }
         return 0;
     }
 
     public void printAChart(String type) {
-        final A a = new A("Средняя длинна слова = " + String.valueOf(wordLengthMiddle(type)), type, treeMap);
-        demo.pack();
-        RefineryUtilities.centerFrameOnScreen(demo);
-        demo.setVisible(true);
+
+        ArrayList<WordWithType> keyList = new ArrayList<WordWithType>(treeMap.keySet());
+        ArrayList<Integer> valueList = new ArrayList<Integer>(treeMap.values());
+
+        TreeMap<Integer, Integer> treeMap1 = new TreeMap<>();
+
+        for (int i = 0; i < keyList.size(); i++) {
+            int finalI = i;
+            if (treeMap1.computeIfPresent(keyList.get(i).getWord().length(), (k, v) -> v + valueList.get(finalI).intValue()) == null) {
+                treeMap1.put(keyList.get(i).getWord().length(), 1);
+            }
+        }
+
+        List<Integer> listX = new ArrayList<Integer>(treeMap1.keySet());
+        List<Integer> listY = new ArrayList<Integer>(treeMap1.values());
+
+
+        final A a = new A("Middle word length for " + type + " = " + wordLengthMiddle(type), listX, listY, "Word length", "Count");
+        a.pack();
+        RefineryUtilities.centerFrameOnScreen(a);
+        a.setVisible(true);
 
     }
+
+    public void printBChart(String type, List<MessageLenghts> listMessageLength) {
+        int sum = 0;
+        int count = 0;
+
+
+        for (int i = 0; i < listMessageLength.size(); i++) {
+            if (listMessageLength.get(i).getType().equals(type)) {
+                sum += listMessageLength.get(i).getLength();
+                count++;
+            }
+        }
+
+        double middle = 0;
+        if (count != 0) {
+            middle = (double) sum / count;
+        }
+
+        List<Integer> listX = new ArrayList<>();
+        List<Integer> listY = new ArrayList<>();
+
+        for (int i = 0; i < listMessageLength.size(); i++) {
+            if (listMessageLength.get(i).getType().equals(type)) {
+                if (listX.indexOf(listMessageLength.get(i).getLength()) != null)
+            }
+        }
+
+        final A a = new A("Middle word length for " + type + " = " + wordLengthMiddle(type), listX, listY, "Word length", "Count");
+        a.pack();
+        RefineryUtilities.centerFrameOnScreen(a);
+        a.setVisible(true);
+
+    }
+
+
 }
