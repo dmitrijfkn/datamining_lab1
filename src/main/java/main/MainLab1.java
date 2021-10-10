@@ -9,7 +9,7 @@ import logic.WordCounter;
 import java.io.IOException;
 import java.util.List;
 
-public class Main {
+public class MainLab1 {
     public static void main(String[] args) {
 
         CSVConverter csvConverter = new CSVConverter();
@@ -29,11 +29,15 @@ public class Main {
         for (CSV c : list) {
             strings = c.getText();
             for (String line : strings) {
-                wordCounter.addWord(new WordWithType(c.getType(), line));
+                line = line.replaceAll("[^a-zA-Z]", "");
+                if (!line.equals(""))
+                    wordCounter.addWord(new WordWithType(c.getType(), line));
             }
         }
 
         wordCounter.printAChart("ham");
+        wordCounter.printAChart("spam");
         wordCounter.printBChart("ham",csvConverter.getListMessageLength());
+        wordCounter.printBChart("spam",csvConverter.getListMessageLength());
     }
 }

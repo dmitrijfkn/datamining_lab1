@@ -29,7 +29,7 @@ public class WordCounter {
 
 
     public void addWord(WordWithType word) {
-        if (stopWords.contains(word)) {
+        if (stopWords.contains(word.getWord())) {
             return;
         } else if (treeMap.computeIfPresent(word, (k, v) -> v + 1) == null) {
             treeMap.put(word, 1);
@@ -132,5 +132,30 @@ public class WordCounter {
 
     }
 
+    public int countAllWords(String type){
+        int result = 0;
+        for(Map.Entry<WordWithType,Integer> entry : treeMap.entrySet()) {
+            WordWithType key = entry.getKey();
+            Integer value = entry.getValue();
+
+            if(key.getType().equals(type)){
+                result+=value;
+            }
+        }
+        return result;
+    }
+
+    public int countWord(String word, String type){
+        int result = 0;
+        for(Map.Entry<WordWithType,Integer> entry : treeMap.entrySet()) {
+            WordWithType key = entry.getKey();
+            Integer value = entry.getValue();
+
+            if(key.getType().equals(type) && key.getWord().equals(word)){
+                result+=value;
+            }
+        }
+        return result;
+    }
 
 }
