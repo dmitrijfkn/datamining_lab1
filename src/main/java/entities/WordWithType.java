@@ -38,4 +38,11 @@ public class WordWithType implements Comparable<WordWithType> {
     public int compareTo(WordWithType o) {
         return word.compareTo(o.getWord());
     }
+
+    @Override
+    public String toString() {
+        return "{type='" + type + '\'' +
+                ", word='" + word + '\'' +
+                '}';
+    }
 }

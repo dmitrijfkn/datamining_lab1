@@ -5,9 +5,12 @@ import entities.CSV;
 import entities.WordWithType;
 import logic.CSVConverter;
 import logic.WordCounter;
+import logic.WorkWithText;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,7 +20,6 @@ public class MainLab2 {
         Scanner in = new Scanner(System.in);
         CSVConverter csvConverter = new CSVConverter();
 
-        System.out.println("Please choose between:");
 
         while (true) {
             System.out.println("Enter path:");
@@ -33,27 +35,86 @@ public class MainLab2 {
 
         List<CSV> list = csvConverter.getList();
 
+        String sentence = "";
+        while (!sentence.equals("stop")) {
+            System.out.println("Enter you`r sentence");
+            sentence = in.nextLine();
+
+            double spamProbability = findProbabilityOfType("spam", sentence, list);
+            double hamProbability = findProbabilityOfType("ham", sentence, list);
+            double sumProbability = spamProbability + hamProbability;
+
+
+            //System.out.println("spam - " + spamProbability /*+ "%"/**/);
+            //System.out.println("ham - " + hamProbability /*+ "%"*/);
+
+            if (spamProbability > hamProbability) {
+                System.out.println("*** SPAM ***");
+            } else {
+                System.out.println("*** HAM ***");
+            }
+        }
+    }
+
+    private static double findProbabilityOfType(String type, String sentence, List<CSV> list) {
         WordCounter wordCounter = new WordCounter("stopwords.txt");
         String[] strings;
+        ArrayList<String> words = new ArrayList<>(Arrays.asList(WorkWithText.textToWords(sentence)));
+
         for (CSV c : list) {
             strings = c.getText();
             for (String line : strings) {
                 line = line.replaceAll("[^a-zA-Z]", "");
-                if (!line.equals(""))
+                if (line.length() != 0) {
                     wordCounter.addWord(new WordWithType(c.getType(), line));
+                }
             }
         }
 
-        String word;
-        while (true) {
-            System.out.println("Enter word or \"stop\" to stop");
-            word = in.nextLine();
-            if (word.equals("stop")) {
-                break;
-            } else {
-                System.out.println((double) wordCounter.countWord(word, "ham") / wordCounter.countAllWords("ham") * 100 + " percents in ham");
-                System.out.println((double) wordCounter.countWord(word, "spam") / wordCounter.countAllWords("spam") * 100 + " percents in spam");
+        int numberOfMessages = 0;
+        int numberOfTypeMessages = 0;
+
+
+        for (CSV csv : list) {
+            if (csv.getType().equals(type))
+                numberOfTypeMessages++;
+            numberOfMessages++;
+        }
+        double typeProbability = (double) numberOfTypeMessages / numberOfMessages;
+
+        //p_type
+
+
+        double p_type = (double) wordCounter.countAllWords(type) / (wordCounter.countAllWords("ham") + wordCounter.countAllWords("spam"));
+
+
+        //считаем сколько слов не встречалось
+
+        int unknowns_type = 0;
+
+        for (int i = 0; i < words.size(); i++) {
+            if (wordCounter.stopWords.contains(words.get(i))) {
+                words.remove(words.get(i));
+                i--;
+            } else if (wordCounter.countWord(words.get(i), type) == 0) {
+                unknowns_type++;
             }
         }
+
+
+        double probability = 1.0;
+
+
+        for (String word : words) {
+            if (wordCounter.countWord(word, "ham") != 0 || wordCounter.countWord(word, "spam") != 0) {
+                probability *= (double) (wordCounter.countWord(word, type) + 1) / (wordCounter.countIndividualWords(type) + unknowns_type);
+            } else if (type.equals("ham")) {
+                probability *= (double) (wordCounter.countWord(word, type) + 2) / (wordCounter.countIndividualWords("ham") + wordCounter.countIndividualWords("spam") + unknowns_type);
+            } else if (type.equals("spam")) {
+                probability *= (double) (wordCounter.countWord(word, type) + 1) / (wordCounter.countIndividualWords("ham") + wordCounter.countIndividualWords("spam") + unknowns_type);
+            }
+        }
+
+        return probability * p_type;
     }
 }

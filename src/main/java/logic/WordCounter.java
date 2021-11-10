@@ -23,7 +23,7 @@ public class WordCounter {
         }
     }
 
-    private List<String> stopWords = new LinkedList<>();
+    public List<String> stopWords = new LinkedList<>();
 
     private TreeMap<WordWithType, Integer> treeMap = new TreeMap<>();
 
@@ -131,6 +131,21 @@ public class WordCounter {
         a.setVisible(true);
 
     }
+
+
+    public int countIndividualWords(String type){
+        int result = 0;
+        for(Map.Entry<WordWithType,Integer> entry : treeMap.entrySet()) {
+            WordWithType key = entry.getKey();
+            Integer value = entry.getValue();
+
+            if(key.getType().equals(type)){
+                result++;
+            }
+        }
+        return result;
+    }
+
 
     public int countAllWords(String type){
         int result = 0;
