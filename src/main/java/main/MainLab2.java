@@ -106,13 +106,7 @@ public class MainLab2 {
 
 
         for (String word : words) {
-            if (wordCounter.countWord(word, "ham") != 0 || wordCounter.countWord(word, "spam") != 0) {
-                probability *= (double) (wordCounter.countWord(word, type) + 1) / (wordCounter.countIndividualWords(type) + unknowns_type);
-            } else if (type.equals("ham")) {
-                probability *= (double) (wordCounter.countWord(word, type) + 2) / (wordCounter.countIndividualWords("ham") + wordCounter.countIndividualWords("spam") + unknowns_type);
-            } else if (type.equals("spam")) {
-                probability *= (double) (wordCounter.countWord(word, type) + 1) / (wordCounter.countIndividualWords("ham") + wordCounter.countIndividualWords("spam") + unknowns_type);
-            }
+            probability *= (double) (wordCounter.countWord(word, type) + 1) / (wordCounter.countAllWords(type));
         }
 
         return probability * p_type;
